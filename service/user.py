@@ -1,20 +1,16 @@
 from sqlalchemy.orm import Session
 from schemas import schema
+from models import model
 from repository.user import UserRepository
-from models.model import User
-from typing import List
+from typing import List, Optional, Any
 
 
 class UserService:
 
   @staticmethod
-  def create(request: schema.User, db:Session) -> User:
+  def create(request: schema.User, db: Session) -> model.User:
     return UserRepository.create(request, db)
 
   @staticmethod
-  def show(id: int, db: Session) -> User:
-    return UserRepository.show(id,db)
-
-  @staticmethod
-  def get_all(db: Session) -> List[User]:
+  def get_all(db: Session) -> List[model.User]:
     return UserRepository.get_all(db)

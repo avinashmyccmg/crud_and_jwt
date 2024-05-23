@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
-from typing import Union, List
+from typing import Union, List, Dict, Any, Optional
 from schemas.schema import TokenData
 
 
@@ -9,18 +9,18 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
-def create_access_token(data: dict) -> str:
-  to_encode = data.copy()
-  expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+def create_access_token(data: dict[str, Any]) -> str:
+  to_encode: Dict[str, Any] = data.copy()
+  expire: datetime = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
   to_encode.update({"exp": expire})
-  encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+  encoded_jwt: str = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
   return encoded_jwt
 
 
-def verify_token(token: str, credentials_exception):
+def verify_token(token: str, credentials_exception: BaseException) -> None:
   try:
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    email: str = payload.get("sub")
+    payload: Dict[str, Any] = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    email: Optional[str] = payload.get('sub')
     if email is None:
       raise credentials_exception
     token_data = TokenData(email=email)
